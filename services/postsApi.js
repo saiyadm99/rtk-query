@@ -4,6 +4,11 @@ export const postsApi = createApi({
   reducerPath: "postsApi",
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_URL,
+		prepareHeaders: (headers) => {
+      const token = localStorage.getItem("token");
+      if (token) { headers.set("authorization", `Bearer ${token}`);}
+      return headers;
+    },
   }),
   tagTypes: ["Posts"],
   endpoints: (builder) => ({

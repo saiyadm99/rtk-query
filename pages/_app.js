@@ -1,12 +1,14 @@
 import "../styles/globals.css";
 import { Provider } from "react-redux";
 import { store } from "../store/store";
-import "../styles/globals.css";
+import { AuthProvider } from "@/context/FirebaseAuthContext";
 
 export default function App({ Component, pageProps }) {
   return (
     <Provider store={store}>
-      <Component {...pageProps} />
+			<AuthProvider>
+				<Component {...pageProps} />
+			</AuthProvider>
     </Provider>
   );
 }

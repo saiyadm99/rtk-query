@@ -5,8 +5,14 @@ import {
   useDeletePostMutation,
   useUpdatePostMutation,
 } from "../services/postsApi";
+import { useFirebaseAuth } from "../context/FirebaseAuthContext";
+import AuthModal from "../components/AuthModal";
+import LoginForm from "../components/firebase/LoginForm";
+import SignupForm from "../components/firebase/SignupForm";
 
 export default function Home() {
+  const { user, logout, loading } = useFirebaseAuth();
+
   const { data = [], isLoading } = useGetPostsQuery();
 
   const [addPost] = useAddPostMutation();
@@ -17,9 +23,14 @@ export default function Home() {
   const [editingId, setEditingId] = useState(null);
   const [editText, setEditText] = useState("");
 
+  const [showModal, setShowModal] = useState(false);
+  const [authMode, setAuthMode] = useState("login");
+
   const handleAdd = async () => {
     if (!title) return;
+
     await addPost({ title }).unwrap();
+
     setTitle("");
   };
 
@@ -29,19 +40,57 @@ export default function Home() {
   };
 
   const saveEdit = async (id) => {
-    await updatePost({ id, title: editText }).unwrap();
+    await updatePost({
+      id,
+      title: editText,
+    }).unwrap();
+
     setEditingId(null);
   };
 
-  if (isLoading) {
-    return <div className="p-6 text-center">Loading...</div>;
+  if (loading || isLoading) {
+    return (
+      <div className="p-6 text-center">
+        Loading...
+      </div>
+    );
   }
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-2xl mx-auto bg-white shadow rounded p-6">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h1 className="text-2xl font-bold">
+              RTK
+            </h1>
 
-        <h1 className="text-2xl font-bold mb-6">RTK</h1>
+            {user && (
+              <p className="text-sm text-gray-500">
+                Logged in as: {user.email}
+              </p>
+            )}
+          </div>
+
+          {user ? (
+            <button
+              onClick={logout}
+              className="bg-red-500 text-white px-4 py-2 rounded"
+            >
+              Logout
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                setAuthMode("login");
+                setShowModal(true);
+              }}
+              className="bg-blue-500 text-white px-4 py-2 rounded"
+            >
+              Login
+            </button>
+          )}
+        </div>
 
         <div className="flex gap-2 mb-6">
           <input
@@ -69,10 +118,14 @@ export default function Home() {
                 <input
                   className="border p-1 flex-1 mr-2"
                   value={editText}
-                  onChange={(e) => setEditText(e.target.value)}
+                  onChange={(e) =>
+                    setEditText(e.target.value)
+                  }
                 />
               ) : (
-                <span className="flex-1">{post.title}</span>
+                <span className="flex-1">
+                  {post.title}
+                </span>
               )}
 
               <div className="flex gap-2">
@@ -103,6 +156,32 @@ export default function Home() {
           ))}
         </ul>
       </div>
+
+      {showModal && (
+        <AuthModal
+          onClose={() => setShowModal(false)}
+        >
+          {authMode === "login" ? (
+            <LoginForm
+              closeModal={() =>
+                setShowModal(false)
+              }
+              switchToSignup={() =>
+                setAuthMode("signup")
+              }
+            />
+          ) : (
+            <SignupForm
+              closeModal={() =>
+                setShowModal(false)
+              }
+              switchToLogin={() =>
+                setAuthMode("login")
+              }
+            />
+          )}
+        </AuthModal>
+      )}
     </div>
   );
 }
