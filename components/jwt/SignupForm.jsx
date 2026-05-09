@@ -1,30 +1,16 @@
 import { useState } from "react";
-
 import { useJwtAuth } from "../../context/JwtAuthContext";
 
-export default function SignupForm({
-  closeModal,
-  switchToLogin,
-}) {
-  const { signup } =
-    useJwtAuth();
-
-  const [email, setEmail] =
-    useState("");
-
-  const [password, setPassword] =
-    useState("");
-
-  const [error, setError] =
-    useState("");
+export default function SignupForm({ closeModal, switchToLogin }) {
+  const { signup } = useJwtAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const result = await signup({
-      email,
-      password,
-    });
+    const result = await signup({ email, password });
 
     if (result.success) {
       closeModal();
@@ -35,24 +21,15 @@ export default function SignupForm({
 
   return (
     <div>
+      <h2 className="text-3xl font-bold mb-6">JWT Signup</h2>
 
-      <h2 className="text-3xl font-bold mb-6">
-        JWT Signup
-      </h2>
-
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-4"
-      >
-
+      <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="email"
           placeholder="Email"
           className="border p-3 w-full rounded"
           value={email}
-          onChange={(e) =>
-            setEmail(e.target.value)
-          }
+          onChange={(e) => setEmail(e.target.value)}
         />
 
         <input
@@ -60,9 +37,7 @@ export default function SignupForm({
           placeholder="Password"
           className="border p-3 w-full rounded"
           value={password}
-          onChange={(e) =>
-            setPassword(e.target.value)
-          }
+          onChange={(e) => setPassword(e.target.value)}
         />
 
         <button
@@ -71,29 +46,19 @@ export default function SignupForm({
         >
           Signup
         </button>
-
       </form>
 
-      {error && (
-        <p className="text-red-500 mt-4">
-          {error}
-        </p>
-      )}
+      {error && <p className="text-red-500 mt-4">{error}</p>}
 
       <p className="mt-6 text-center">
-
-        Already have an account?
-        {" "}
-
+        Already have an account?{" "}
         <button
           onClick={switchToLogin}
           className="text-blue-500"
         >
           Login
         </button>
-
       </p>
-
     </div>
   );
 }

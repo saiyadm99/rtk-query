@@ -1,5 +1,4 @@
 import { useState } from "react";
-
 import {
   useGetPostsQuery,
   useAddPostMutation,
@@ -7,29 +6,15 @@ import {
   useUpdatePostMutation,
 } from "../services/postsApi";
 
-export default function PostList({
-  canEdit,
-}) {
-  const { data = [], isLoading } =
-    useGetPostsQuery();
+export default function PostList({ canEdit }) {
+  const { data = [], isLoading } = useGetPostsQuery();
+  const [addPost] = useAddPostMutation();
+  const [deletePost] = useDeletePostMutation();
+  const [updatePost] = useUpdatePostMutation();
 
-  const [addPost] =
-    useAddPostMutation();
-
-  const [deletePost] =
-    useDeletePostMutation();
-
-  const [updatePost] =
-    useUpdatePostMutation();
-
-  const [title, setTitle] =
-    useState("");
-
-  const [editingId, setEditingId] =
-    useState(null);
-
-  const [editText, setEditText] =
-    useState("");
+  const [title, setTitle] = useState("");
+  const [editingId, setEditingId] = useState(null);
+  const [editText, setEditText] = useState("");
 
   const handleAdd = async () => {
     if (!title) return;
@@ -43,7 +28,6 @@ export default function PostList({
 
   const startEdit = (post) => {
     setEditingId(post.id);
-
     setEditText(post.title);
   };
 
@@ -57,25 +41,17 @@ export default function PostList({
   };
 
   if (isLoading) {
-    return (
-      <div className="text-center">
-        Loading posts...
-      </div>
-    );
+    return <div className="text-center">Loading posts...</div>;
   }
 
   return (
     <div>
-
       {canEdit && (
         <div className="flex gap-2 mb-6">
-
           <input
             className="border p-2 flex-1 rounded"
             value={title}
-            onChange={(e) =>
-              setTitle(e.target.value)
-            }
+            onChange={(e) => setTitle(e.target.value)}
             placeholder="Enter post title"
           />
 
@@ -85,52 +61,38 @@ export default function PostList({
           >
             Add
           </button>
-
         </div>
       )}
 
       <ul className="space-y-3">
-
         {data.map((post) => (
           <li
             key={post.id}
             className="border p-3 rounded flex justify-between items-center"
           >
-
             {editingId === post.id ? (
               <input
                 className="border p-1 flex-1 mr-2"
                 value={editText}
-                onChange={(e) =>
-                  setEditText(
-                    e.target.value
-                  )
-                }
+                onChange={(e) => setEditText(e.target.value)}
               />
             ) : (
-              <span className="flex-1">
-                {post.title}
-              </span>
+              <span className="flex-1">{post.title}</span>
             )}
 
             {canEdit && (
               <div className="flex gap-2">
-
                 {editingId === post.id ? (
                   <button
                     className="bg-green-500 text-white px-2 py-1 rounded"
-                    onClick={() =>
-                      saveEdit(post.id)
-                    }
+                    onClick={() => saveEdit(post.id)}
                   >
                     Save
                   </button>
                 ) : (
                   <button
                     className="bg-yellow-500 text-white px-2 py-1 rounded"
-                    onClick={() =>
-                      startEdit(post)
-                    }
+                    onClick={() => startEdit(post)}
                   >
                     Edit
                   </button>
@@ -138,21 +100,15 @@ export default function PostList({
 
                 <button
                   className="bg-red-500 text-white px-2 py-1 rounded"
-                  onClick={() =>
-                    deletePost(post.id)
-                  }
+                  onClick={() => deletePost(post.id)}
                 >
                   Delete
                 </button>
-
               </div>
             )}
-
           </li>
         ))}
-
       </ul>
-
     </div>
   );
 }
