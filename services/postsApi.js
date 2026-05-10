@@ -43,7 +43,6 @@ export const postsApi = createApi({
       }),
       invalidatesTags: ["Posts"],
     }),
-
   }),
 });
 

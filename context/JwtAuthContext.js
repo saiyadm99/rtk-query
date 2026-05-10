@@ -35,7 +35,7 @@ export function JwtAuthProvider({ children }) {
       if (!response.ok) {
         throw new Error(data.message);
       }
-
+			
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
       setUser(data.user);

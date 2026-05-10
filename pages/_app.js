@@ -6,9 +6,7 @@ import { AuthProvider } from "@/context/FirebaseAuthContext";
 export default function App({ Component, pageProps }) {
   return (
     <Provider store={store}>
-			<AuthProvider>
-				<Component {...pageProps} />
-			</AuthProvider>
+			<Component {...pageProps} />
     </Provider>
   );
 }
